@@ -84,25 +84,19 @@ The project will be considered successful when:
 
 
 
-4.1 Included in Scope(must be in table form)
+4.1 Included in Scope
 
-\*Crop = Maize, combining white and yellow maize where consistent records permit.
-
-\*Geographic Coverage = Free State, Mpumalanga and North West, subject to dataset suitability.
-
-\*Prediction Level = Provincial maize yield per agricultural season, expressed in tonnes per hectare.
-
-\*Data = Historical maize yield records and suitable weather variables. Production and harvested-area records may be used to derive or validate yield.
-
-\*Analysis = Historical trends, provincial comparisons and model evaluation.
-
-\*AI Techniques = Regression models, a small experimental neural network and basic natural language intent classification.
-
-\*Decision Support = Yield comparisons and production-volume scenarios based on explicitly stated area assumptions.
-
-\*User Interface = A Python-based dashboard with a text assistant.
-
-\*Project Management = GitHub for version control and GitHub Projects for tracking work.
+| Scope item | Description |
+| --- | --- |
+| Crop | Maize, combining white and yellow maize where consistent records permit. |
+| Geographic Coverage | Free State, Mpumalanga and North West, subject to dataset suitability. |
+| Prediction Level | Provincial maize yield per agricultural season, expressed in tonnes per hectare. |
+| Data | Historical maize yield records and suitable weather variables. Production and harvested-area records may be used to derive or validate yield. |
+| Analysis | Historical trends, provincial comparisons and model evaluation. |
+| AI Techniques | Regression models, a small experimental neural network and basic natural language intent classification. |
+| Decision Support | Yield comparisons and production-volume scenarios based on explicitly stated area assumptions. |
+| User Interface | A Python-based dashboard with a text assistant. |
+| Project Management | GitHub for version control and GitHub Projects for tracking work. |
 
 
 
@@ -196,25 +190,19 @@ It must validate inputs, use consistent units, document data sources and support
 
 
 
-4.5 Initial Tools and Techniques(must be in table form)
+4.5 Initial Tools and Techniques
 
-\*Python, pandas and NumPy = Prepare, validate and analyse data.
-
-\*Historical baseline, linear regression and random forest regression = Compare prediction approaches. 
-
-\*Chronological evaluation, MAE and RMSE = Measure prediction error on unseen seasons
-
-\*Historical trend analysis and suitable lagged features = Examine changes over time and support prediction.
-
-\*Small feed-forward neural network = Evaluate an experimental deep learning approach.
-
-\*Natural language intent classification = Interpret a limited range of user questions.
-
-\*Bounded text assistant = Explain project concepts and retrieve available results.
-
-\*Streamlit = Present the prototype dashboard.
-
-\*GitHub and GitHub Projects = Maintain version history and track project tasks.
+| Tool or technique | Purpose |
+| --- | --- |
+| Python, pandas and NumPy | Prepare, validate and analyse data. |
+| Historical baseline, linear regression and random forest regression | Compare prediction approaches. |
+| Chronological evaluation, MAE and RMSE | Measure prediction error on unseen seasons |
+| Historical trend analysis and suitable lagged features | Examine changes over time and support prediction. |
+| Small feed-forward neural network | Evaluate an experimental deep learning approach. |
+| Natural language intent classification | Interpret a limited range of user questions. |
+| Bounded text assistant | Explain project concepts and retrieve available results. |
+| Streamlit | Present the prototype dashboard. |
+| GitHub and GitHub Projects | Maintain version history and track project tasks. |
 
 
 
