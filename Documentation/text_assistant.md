@@ -18,7 +18,7 @@ Yield and storage explanations use tonnes per planted hectare to match the datas
 
 ## Testing
 
-Five automated test methods passed. They check 15 supported question variants, 10 fallback inputs, greetings, reading saved scores, missing or invalid results files, and the absence of invented live forecasts. A terminal session was also checked using a model-results question, a planting question and an unrelated question.
+Five test methods passed. They check 15 supported question variants, 10 fallback inputs, greetings, reading saved scores, missing or invalid results files, and the absence of invented live forecasts. A terminal session was also checked using a model-results question, a planting question and an unrelated question.
 
 This is a small development regression set, not an independent measure of chatbot accuracy. Further questions from users are needed to assess coverage. The tests do not guarantee correct handling of every out-of-scope question.
 
