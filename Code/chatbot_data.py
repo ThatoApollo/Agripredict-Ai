@@ -3,7 +3,7 @@ TOPICS = {
     "platform": (
         ["how do i use agripredict", "what does the dashboard show", "how do i choose a province", "what can this platform do"],
         "AgriPredict supports provincial maize planning for Free State, Mpumalanga and North West. "
-        "The dashboard is still being developed. The completed scripts provide historical trends and model comparisons. "
+        "The dashboard shows historical yield trends, a historical planning baseline, planted-area scenarios and model comparisons. "
         "Ask about data, model performance, limitations or general maize farming."
     ),
     "estimate": (
