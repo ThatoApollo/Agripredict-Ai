@@ -6,7 +6,7 @@ The text assistant answers supported questions about AgriPredict AI and general 
 
 TF-IDF converts example questions into numeric features, and logistic regression predicts a topic. A similarity check also compares the question with the examples. The assistant returns a predefined answer only when the classifier and similarity check agree and the similarity and topic separation meet fixed thresholds. Otherwise, it asks the user to rephrase.
 
-The thresholds are development heuristics, not probabilities or proof that a question is understood. Questions with familiar words can still be classified incorrectly. Short, unfamiliar or multi-topic questions may receive a fallback. The assistant supports English and does not remember earlier messages.
+The assistant uses practical rules developed during testing to decide when to answer; these do not prove that it has understood a question. Questions with familiar words can still be classified incorrectly. Short, unfamiliar or multi-topic questions may receive a fallback. The assistant supports English and does not remember earlier messages.
 
 Agricultural guidance is written separately from the yield model. It is not learned from the maize dataset and is not a finding from the prediction models. The assistant does not diagnose crop problems, recommend pesticide doses, calculate live forecasts or cover every agriculture topic.
 
