@@ -120,6 +120,7 @@ It must validate inputs, use consistent units, document data sources and support
 | Tool or technique | Purpose |
 | --- | --- |
 | Python, pandas and NumPy | Prepare, validate and analyse data. |
+| Matplotlib | Create historical yield charts and moving-average plots for time series analysis. |
 | Historical baseline, linear regression and random forest regression | Compare prediction approaches. |
 | Chronological evaluation, MAE and RMSE | Measure prediction error on unseen seasons. |
 | Historical trend analysis and suitable lagged features | Examine changes over time and support prediction. |
