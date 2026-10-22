@@ -2,31 +2,32 @@
 
 ## Data and Estimates
 
-The summary and historical charts show all 24 recorded seasons, 2000/01–2023/24. Selecting a province changes its historical chart, average yield and planning baseline. The three-season moving average includes the current observed season and is not a forecast.
+The dashboard summary and historical charts cover all 24 recorded seasons, from 2000/01 to 2023/24. When a user selects a province, the dashboard updates its historical chart, average yield and planning baseline. The three-season moving average includes the current observed season and helps show past patterns; it does not predict future yields.
 
-The planning baseline uses the selected province's average yield from 2000/01–2019/20. This matches the fitting period used for baseline test evaluation. It is a historical reference, not a forecast for the current season. All yields are in tonnes per planted hectare.
+The planning baseline is the selected province's average yield for 2000/01–2019/20, the same period used to fit the baseline for test evaluation. It provides a historical reference for planning. It is not a forecast for the current season. All yields are measured in tonnes per planted hectare.
 
-The planning scenario multiplies this baseline by the user's assumed planted area. An assumed delivery percentage estimates the share reaching the cooperative. These are scenarios rather than verified production or delivery forecasts.
+For a planning scenario, the dashboard multiplies this baseline by the planted area entered by the user. The user can also enter an assumed delivery percentage to estimate how much of that production might reach the cooperative. Both figures depend on these assumptions and should be treated as scenarios rather than verified forecasts.
 
 ## Model Results and Assistant
 
-The dashboard reads regression scores from `Results/model_metrics.csv`. If available, it also displays the experimental network from `Results/neural_network_metrics.csv`, labelled as an exploratory comparison. Missing regression scores produce an instruction to run the model script.
+The dashboard loads the regression scores from `Results/model_metrics.csv`. When `Results/neural_network_metrics.csv` is available, it also shows the experimental neural network scores, labelled as an exploratory comparison. If the regression scores are missing, the dashboard asks the user to run the model script.
 
-The assistant calls the existing `chatbot.respond()` function. It displays conversation history but does not interpret follow-up questions using earlier messages. The updated `chatbot_data.py` describes the completed dashboard features.
+The text assistant uses the existing `chatbot.respond()` function. Users can see the conversation history, but each question is handled separately, without using earlier messages to interpret follow-up questions. The updated `chatbot_data.py` describes the completed dashboard features.
 
 ## Running the Dashboard
 
-Add `streamlit>=1.50` to the existing `requirements.txt`, keeping the other packages. Then run from the project root:
+Add `streamlit>=1.50` to the existing `requirements.txt`, keeping the other packages. Then run these commands from the project root:
 
 ```bash
 python -m pip install -r requirements.txt
 python -m streamlit run Code/dashboard.py
 ```
 
-Streamlit provides a local browser address. Keep `settings.py`, `preparation.py`, `chatbot.py` and `chatbot_data.py` in `Code/`, and the final dataset in `Dataset/`.
+Streamlit displays a local address that can be opened in a browser. Keep `settings.py`, `preparation.py`, `chatbot.py` and `chatbot_data.py` in `Code/`, and the final dataset in `Dataset/`.
 
 ## Checks Completed
 
-Streamlit's app test runner loaded the dashboard without application exceptions. Checks passed for changing the province, calculating a zero-area scenario, asking about saved model scores and clearing the conversation. These checks verify behaviour; the appearance still needs review in your browser at your screen size.
+The dashboard loaded in Streamlit's app test runner without application errors. Checks passed for changing the province, entering a planted area of zero, asking about saved model scores and clearing the conversation. These checks confirm the tested behaviour. The layout still needs to be reviewed in a browser at the user's screen size.
 
-A demonstration video will show how the final model performs.
+A demonstration video will show the dashboard in use and explain the final model's results.
+
