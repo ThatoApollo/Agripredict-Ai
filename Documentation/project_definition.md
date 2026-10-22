@@ -127,7 +127,7 @@ It must validate inputs, use consistent units, document data sources and support
 | Small feed-forward neural network | Evaluate an experimental deep learning approach. |
 | Natural language intent classification | Match user questions to supported platform and maize farming topics. |
 | Bounded text assistant | Provide predefined answers about the platform and general maize farming, while explaining its limitations. |
-| Streamlit | Present the prototype dashboard. |
+| Streamlit | Build the dashboard for viewing yield trends, planning scenarios, model results and the text assistant.. |
 | GitHub and GitHub Projects | Maintain version history and track project tasks. |
 
 ## 5. Expected Business Benefits
