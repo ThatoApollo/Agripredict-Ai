@@ -1,0 +1,5 @@
+split,model,MAE,RMSE,fit_rows,evaluation_rows,convergence_warning
+Validation,Historical baseline,1.491060470875601,1.6146267614638414,48,12,
+Validation,Experimental neural network,1.5927344521367293,1.654007904160697,48,12,
+Test,Historical baseline,1.5112867247634458,1.6138485635187167,60,12,
+Test,Experimental neural network,1.695339707845217,2.013531128559047,60,12,
