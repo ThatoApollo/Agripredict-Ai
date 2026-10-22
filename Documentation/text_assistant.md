@@ -37,13 +37,6 @@ Type `quit` to exit. Example questions:
 - When should I plant maize?
 - What is crop rotation?
 
-Run the checks with:
-
-```bash
-python -m unittest discover -s Tests -p test_chatbot.py -v
-```
-
-The assistant uses pandas and scikit-learn, which are already project dependencies. No API key, online service or additional package is required at runtime. Keep `chatbot.py` and `chatbot_data.py` together in `Code/`. The future dashboard can call `chatbot.respond(question)`.
 
 ## Sources for General Guidance
 
