@@ -91,14 +91,10 @@ with scenario_column:
         st.caption("This is a historical reference, not a current-season forecast. No current weather inputs are connected.")
     with st.container(border=True):
         st.subheader("Planning scenario")
-        area = st.number_input("Assumed planted area (hectares)", min_value=0.0,
+        area = st.number_input("Planted area for this scenario (hectares)", min_value=0.0,
                                max_value=10000000.0, value=300.0, step=50.0)
-        share = st.number_input("Assumed share delivered to the cooperative (%)", min_value=0.0,
-                                max_value=100.0, value=100.0, step=5.0)
         volume = baseline * area
-        st.metric("Scenario production", f"{volume:,.0f} tonnes")
-        st.write(f"Assumed deliveries: **{volume * share / 100:,.0f} tonnes**.")
-        st.caption("Baseline yield × assumed planted area. Provincial averages may not represent the chosen land. Delivery share is a user assumption, not a measured supply forecast.")
+        st.metric("Estimated production for this scenario", f"{volume:,.0f} tonnes")
 
 comparison_column, performance_column = st.columns(2)
 with comparison_column:
