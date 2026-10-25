@@ -61,7 +61,7 @@ for column, label, value in zip(st.columns(4),
     with column:
         with st.container(border=True):
             st.metric(label, value)
-st.caption("All yields use planted hectares. Average yield refers to the selected province over the full recorded period.")
+st.caption("Yield is measured in tonnes per planted hectare. The average covers all recorded seasons for the selected province.")
 
 chart_column, scenario_column = st.columns([2, 1])
 with chart_column:
