@@ -2,11 +2,13 @@
 
 ## Data and Estimates
 
-The dashboard summary and historical charts cover all 24 recorded seasons, from 2000/01 to 2023/24. When a user selects a province, the dashboard updates its historical chart, average yield and planning baseline. The three-season moving average includes the current observed season and helps show past patterns; it does not predict future yields.
+The dashboard summary and historical charts cover all 24 recorded seasons, from 2000/01 to 2023/24. When a user selects a province, the dashboard updates its historical chart, average yield and planning baseline. The three-season moving average includes each observed season and the two seasons before it. It helps show past patterns; it does not predict future yields.
 
 The planning baseline is the selected province's average yield for 2000/01–2019/20, the same period used to fit the baseline for test evaluation. It provides a historical reference for planning. It is not a forecast for the current season. All yields are measured in tonnes per planted hectare.
 
-For a planning scenario, the dashboard multiplies this baseline by the planted area entered by the user. The user can also enter an assumed delivery percentage to estimate how much of that production might reach the cooperative. Both figures depend on these assumptions and should be treated as scenarios rather than verified forecasts.
+The historical average was the selected approach because it had lower validation errors than the regression models and also performed better on the test data. It therefore provides the reference value for production planning.
+
+For a planning scenario, the dashboard multiplies this baseline by the planted area entered by the user to calculate estimated production in tonnes. The area field starts blank, and the result appears after a number is entered. Users can type their own area or use the buttons to change it by one hectare. The result is a planning scenario rather than a verified forecast.
 
 ## Model Results and Assistant
 
@@ -16,7 +18,6 @@ The text assistant uses the existing `chatbot.respond()` function. Users can see
 
 ## Running the Dashboard
 
-Add `streamlit>=1.50` to the existing `requirements.txt`, keeping the other packages. Then run these commands from the project root:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -24,10 +25,3 @@ python -m streamlit run Code/dashboard.py
 ```
 
 Streamlit displays a local address that can be opened in a browser. Keep `settings.py`, `preparation.py`, `chatbot.py` and `chatbot_data.py` in `Code/`, and the final dataset in `Dataset/`.
-
-## Checks Completed
-
-The dashboard loaded in Streamlit's app test runner without application errors. Checks passed for changing the province, entering a planted area of zero, asking about saved model scores and clearing the conversation. These checks confirm the tested behaviour. The layout still needs to be reviewed in a browser at the user's screen size.
-
-A demonstration video will show the dashboard in use and explain the final model's results.
-
