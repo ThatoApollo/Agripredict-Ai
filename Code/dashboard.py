@@ -45,7 +45,7 @@ def read_metrics(filename):
 
 left, right = st.columns([3, 1])
 with left:
-    st.title("Provincial maize outlook")
+    st.title("Provincial Maize Overview")
     st.caption("Yield information for procurement and storage planning — provincial averages, not farm predictions.")
 with right:
     province = st.selectbox("Choose a province", settings.PROVINCES)
