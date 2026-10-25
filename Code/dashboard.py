@@ -152,7 +152,7 @@ with st.container(border=True):
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content":
             "Hello! Ask about model performance, maize planting, soil, irrigation, fertiliser or crop rotation."}]
-    if st.button("Clear conversation"):
+    if st.button("Clear Chat"):
         st.session_state.messages = st.session_state.messages[:1]
     with st.container(height=320):
         for message in st.session_state.messages:
@@ -166,4 +166,4 @@ with st.container(border=True):
         ])
         st.rerun()
 
-st.caption("AgriPredict AI · Student prototype · Small dataset, simplified weather coverage and provincial estimates. Sources and assumptions are documented in the project documentation.")
+st.caption("AgriPredict AI — Turning past harvests into smarter plans.")
