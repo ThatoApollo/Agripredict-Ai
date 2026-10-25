@@ -89,24 +89,13 @@ with scenario_column:
         st.metric("Average yield per planted hectare:", f"{baseline:.2f} t/ha")
         st.write("Calculated from the selected province’s yields between 2000/01 and 2019/20. This average is used in the production planning calculation.")
         st.caption("This average is based on past yields and does not use this season’s weather to predict the harvest.")
-   with st.container(border=True):
-    st.subheader("Planning scenario")
-
-    area = st.number_input(
-        "Enter planted area (hectares)",
-        min_value=0.0,
-        max_value=10000000.0,
-        value=None,
-        step=1.0,
-        placeholder="Type your planted area"
-    )
-
-    if area is not None:
-        volume = baseline * area
-        st.metric(
-            "Estimated production for this scenario",
-            f"{volume:,.0f} tonnes"
-        )
+    with st.container(border=True):
+        st.subheader("Planning scenario")
+        area = st.number_input("Enter planted area (hectares)", min_value=0.0, max_value=10000000.0,
+                           value=None, step=1.0, placeholder="Type your planted area")
+        if area is not None:
+          volume = baseline * area
+          st.metric("Estimated production for this scenario", f"{volume:,.0f} tonnes")
 
 comparison_column, performance_column = st.columns(2)
 with comparison_column:
