@@ -126,8 +126,8 @@ with comparison_column:
         st.caption("This graph compares the average maize yield per planted hectare across the three provinces over 24 seasons, from 2000/01 to 2023/24.")
 with performance_column:
     with st.container(border=True):
-        st.subheader("How the models performed")
-        st.caption("Historical test period: 2020/21–2023/24, covering 12 province-season records. Models were fitted on earlier seasons.")
+        st.subheader("Model performance")
+        st.caption("Models were trained on earlier seasons and tested on 2020/21–2023/24, using 12 records across the three provinces.")
         scores = read_metrics("model_metrics.csv")
         if scores is None:
             st.warning("Model results are unavailable. Run python Code/yield_model.py from the project root.")
@@ -140,8 +140,11 @@ with performance_column:
             table = neural[neural["model"] == "Experimental neural network"]
             st.dataframe(table[["model", "MAE", "RMSE"]].rename(columns={"model": "Approach"}),
                          hide_index=True, width="stretch")
-        st.caption("MAE is the average absolute error; RMSE gives more weight to large errors. Both use tonnes per planted hectare. Lower is better.")
-        st.write("The historical baseline had the lowest validation error in our comparison and remains the preferred approach. None of these results guarantees future accuracy.")
+        st.caption("MAE (Mean Absolute Error): Shows how far predictions were from the recorded yields on average.")
+        st.caption("RMSE (Root Mean Squared Error): Also measures prediction error, but gives more weight to large mistakes. It helps highlight models that occasionally make predictions far from the recorded yields.")
+        st.caption("Lower values mean smaller prediction errors.")
+        st.write("The historical average had the lowest error during validation, so the approach was selected for planning. Future yields may still differ from this average.")
+     
 
 with st.container(border=True):
     st.subheader("AgriPredict Assistant")
