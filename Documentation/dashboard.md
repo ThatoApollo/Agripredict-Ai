@@ -1,6 +1,6 @@
 # AgriPredict AI Dashboard
 
-## Layout
+## Overview
 
 The dashboard summary and historical charts cover all 24 recorded seasons, from 2000/01 to 2023/24. When a user selects a province, the dashboard updates its historical chart, average yield and planning baseline. The three-season moving average includes each observed season and the two seasons before it. It helps show past patterns; it does not predict future yields.
 
