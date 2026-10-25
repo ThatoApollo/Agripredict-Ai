@@ -123,7 +123,7 @@ with comparison_column:
         fig.tight_layout()
         st.pyplot(fig)
         plt.close(fig)
-        st.caption("Mean observed yield across all 24 recorded seasons, 2000/01–2023/24. These bars compare historical yield, not total provincial production.")
+        st.caption("This graph compares the average maize yield per planted hectare across the three provinces over 24 seasons, from 2000/01 to 2023/24.")
 with performance_column:
     with st.container(border=True):
         st.subheader("How the models performed")
