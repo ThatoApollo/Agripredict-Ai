@@ -71,7 +71,7 @@ with chart_column:
         ax.plot(rows["harvest_year"], rows[settings.TARGET], color="#168345",
                 marker="o", markersize=4, label="Observed yield")
         ax.plot(rows["harvest_year"], rows[settings.TARGET].rolling(3).mean(),
-                color="#dc8c22", linestyle="--", label="3-season moving average")
+                color="#dc8c22", linestyle="--", label="Average of the last 3 seasons")
         years = rows["harvest_year"].tolist()[::3]
         ax.set_xticks(years, [f"{y-1}/{str(y)[-2:]}" for y in years], rotation=35, ha="right")
         ax.set_ylabel("Tonnes per planted hectare")
@@ -81,8 +81,8 @@ with chart_column:
         fig.tight_layout()
         st.pyplot(fig)
         plt.close(fig)
-        st.caption("The dashed line averages the current and previous two observed seasons. It smooths historical changes; it is not a forecast.")
-        st.caption("This display includes all recorded seasons through 2023/24. It does not change the earlier model fitting or evaluation splits.")
+        st.caption("The green line shows each season’s recorded yield.")
+        st.caption("The orange dashed line averages three seasons to make the overall pattern easier to see.")
 with scenario_column:
     with st.container(border=True):
         st.subheader("Historical planning baseline")
