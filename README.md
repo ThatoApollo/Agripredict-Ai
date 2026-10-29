@@ -2,15 +2,15 @@
 
 ## 1. Project Background
 
-AgriPredict AI is a Python-based prototype that uses machine learning to estimate maize yield and support harvest-planning discussions. It uses 7,258 Kenyan field observations from the One Acre Fund maize survey dataset, covering 2016–2020. The selected inputs are location, elevation, soil characteristics and hybrid seed status. The intended users are maize farmers and agricultural advisers who have suitable field information and need clear estimates to explore possible harvest sizes. A Streamlit dashboard presents yield estimates, annual yield patterns, a production calculator and a chatbot that explains the project and saved model results. The project follows the assessment theme, “an AI Solution for Industries,” by applying AI to planning within the agricultural sector.
+AgriPredict AI is a Python-based prototype that uses machine learning to estimate maize yield and support harvest-planning scenarios. It uses 7,258 Kenyan field observations from the One Acre Fund maize survey dataset, covering 2016–2020. The selected inputs are location, elevation, soil characteristics and hybrid seed status. The intended users are maize farmers and agricultural advisers who have suitable field information and need clear estimates to explore possible harvest sizes. A Streamlit dashboard presents yield estimates, annual yield patterns, a production calculator and a chatbot that explains the project and saved model results. The project follows the assessment theme, “an AI Solution for Industries,” by applying AI to planning within the agricultural sector.
 
 ## 2. Problem Definition
 
-Maize farmers must plan for harvesting, storage and transport before knowing how much their fields will produce. Yield can vary with soil conditions, weather and farming practices, making it difficult to estimate the resources needed. Historical field records can support planning, but analysing many observations requires time and technical skills.
+Maize farmers must plan for harvesting, storage and transport before knowing how much their fields will produce. Yield can vary with soil conditions, weather and farming practices, making it difficult to estimate the resources needed for agriculture. Historical field records can support planning, but analysing many observations requires time and technical skills.
 
 AgriPredict AI investigates whether machine learning can provide useful maize yield estimates using Kenyan field records. It uses location, elevation, soil characteristics and hybrid seed information to produce an experimental estimate in tonnes per hectare. The dashboard also displays annual mean and median yields and calculates a production scenario using the estimated yield and a user-entered planted area. A text assistant explains supported project topics and saved evaluation results.
 
-These features are intended to help farmers and agricultural advisers discuss possible harvest sizes and related storage and transport needs. Their practical value depends on the model’s performance and the availability of suitable field information. The prototype supports human judgement and does not guarantee future harvest outcomes.
+These features are intended to support procurement and storage planning, helping users source enough maize to meet demand and arrange sufficient storage to reduce the risk of shortages, overcrowding and post-harvest losses. The system supports human judgement and does not guarantee future harvest outcomes.
 
 ## 3. Project Objectives
 
@@ -22,12 +22,11 @@ To develop and evaluate a Python-based AI prototype that estimates maize yield f
 
 1. Define the proposed users, planning needs and system requirements, while identifying assumptions that require stakeholder feedback.
 2. Prepare and validate the Kenyan maize records from 2016–2020, documenting their source, units, missing values and preparation steps.
-3. Describe annual yield patterns using one line chart showing mean and median yields.
+3. Describe annual yield patterns using a line chart showing mean and median yields.
 4. Develop a suitable machine learning model using location, elevation, soil characteristics and hybrid seed status.
-5. Compare model predictions with a historical mean baseline using later, unseen records.
-6. Evaluate performance using Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE), and explain the limitations of the results.
-7. Present yield estimates, production scenarios, annual patterns and relevant limitations through a clear dashboard.
-8. Include a chatbot that explains the platform, saved model results and selected maize farming topics.
+5. Evaluate performance using Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE), and explain the limitations of the results.
+6. Present yield estimates, production scenarios, annual patterns and relevant limitations through a clear dashboard.
+7. Include a chatbot that explains the platform, saved model results and selected maize farming topics.
 
 ### 3.3 Business Success Criteria
 
@@ -37,7 +36,7 @@ The prototype should:
 - Reject incomplete entries and values outside the individual input ranges recorded in the data used to fit the model.
 - Display one annual chart explaining the mean, median and purpose of the comparison.
 - Calculate scenario production in tonnes by multiplying yield in tonnes per hectare by planted area in hectares.
-- Make saved model errors available through the assistant and explain how linear regression compares with the baseline.
+- Make saved model errors available through the assistant and explain what the numbers describe.
 - Answer supported questions and provide a clear response when a question cannot be matched confidently.
 - Explain the assumptions and limitations users need to interpret the outputs.
 
@@ -70,9 +69,6 @@ These criteria assess whether the prototype provides its intended functions. Dem
 - Predictions of cooperative deliveries or guaranteed financial returns.
 - Tracking the same identified farm across several years.
 - Forecasting future annual yields.
-- Commercial deployment and mobile application development.
-
-**Assessment clarification:** The original draft also excluded deep learning. The rubric assesses this component, so its role must be resolved before submission. If an experimental neural network forms part of the final project, its purpose, implementation and results should be documented separately from the dashboard’s linear regression model.
 
 ### 4.3 Initial Requirements
 
@@ -82,11 +78,11 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 
 ### 4.4 Constraints and Risks
 
-#### 4.4.1 Limited time and geographical coverage
+#### 4.4.1 Limited implementation time
 
-**Issue:** The dataset covers five years and selected Kenyan locations. Changes in annual averages may reflect differences in the fields sampled each year.
+**Issue:** The submission deadline limited the time available to develop, test and improve the prototype. This required compromises in the range of features included and the level of refinement possible.
 
-**Response:** Annual findings will be described as patterns in the sampled records. The project will not present them as changes on the same farms or as results representing all of Kenya.
+**Response:** We prioritised the main functions: yield estimation, annual analysis, the production calculator and the text assistant. Further improvements should be recorded as future work, while the included features must be tested and their limitations explained clearly.
 
 #### 4.4.2 Missing or inconsistent data
 
@@ -100,13 +96,14 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 
 **Issue:** Users may not know their soil measurements or may have measurements collected differently from those in the dataset. The model also does not include the coming season’s weather.
 
-**Response:** The dashboard will require complete field information and advise users against guessing. Outputs will be presented as experimental estimates whose usefulness depends on suitable inputs and model performance.
+**Response:** The dashboard will require complete field information and advise users against guessing. Outputs will be presented as experimental estimates whose usefulness depends on suitable inputs and model performance. It will also clarify on the format for typing the inputs.
 
 #### 4.4.4 Overfitting and limited predictive value
 
-**Issue:** A model may learn patterns from earlier records that do not work well on later records. The draft reports that linear regression did not outperform the historical mean baseline in the 2020 comparison.
+**Issue:** A model may perform well on historical training records but produce large errors for a new season, particularly when conditions differ from those previously observed.
 
-**Response:** The project will report both approaches clearly and explain what their results show. Future improvements should be assessed using training and validation data before evaluation on new, untouched data.
+
+**Response:** We will keep model complexity manageable, compare training and validation errors, and assess performance against the historical mean baseline. Other algorithms will be used only when validation results show a clear improvement.
 
 **Verification needed:** Support the comparison with the final calculated MAE and RMSE results.
 
@@ -116,11 +113,17 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 
 **Response:** The dashboard will distinguish yield estimates from calculated production and display their units clearly. The documentation will explain that range checks identify certain input problems but do not establish prediction accuracy.
 
-#### 4.4.6 Unverified business assumptions
+#### 4.4.6 Difficulty finding suitable data
 
-**Issue:** The draft provides no documented stakeholder feedback confirming input availability, acceptable prediction errors or the usefulness of the outputs in everyday planning.
+**Issue:** Finding a dataset with recent maize yield records and relevant inputs was challenging. Detailed weather information was not available among the selected inputs, limiting the factors the model could consider. 
 
-**Response:** Intended benefits will be presented as potential uses. Stakeholder feedback and practical evaluation will be needed before claiming that the prototype improves agricultural decisions.
+**Response:** We focused on the available location, elevation, soil and hybrid seed information. Future work should investigate recent observations and weather data that can be matched to the field locations and growing seasons, then test whether it improves performance.
+
+#### 4.4.7 Limited group capacity
+
+**Issue:** The small number of group members made it difficult to divide tasks evenly while managing development, testing and documentation. This placed pressure on the available time and workload.
+
+**Response:** Tasks should be divided according to each member’s availability and strengths, with clear responsibilities and manageable deadlines. GitHub Projects can help track progress, identify delays and support adjustments to the workload.
 
 ### 4.5 Tools and Techniques
 
@@ -130,17 +133,15 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 | Matplotlib | Produce the annual mean and median yield chart. |
 | Scikit-learn linear regression | Estimate maize yield from the seven selected inputs. |
 | Historical mean baseline | Provide a simple reference for evaluating model performance. |
-| Median imputation | Replace missing numerical inputs where needed, using values learned from the fitting data. |
 | Standardisation | Place numerical inputs on a comparable scale within the fitted pipeline. |
-| Chronological evaluation | Assess predictions using records from later years. |
-| MAE and RMSE | Measure prediction errors in tonnes per hectare. MAE gives the average absolute error, while RMSE gives greater weight to larger errors. |
+| Chronological evaluation, MAE and RMSE | Measure prediction error on unseen seasons. |
 | TF-IDF and logistic regression | Convert questions into numerical text features and classify them into supported assistant topics. |
-| Prepared answers and fallback checks | Keep replies within the assistant’s supported information and handle unmatched questions. |
+| Natural language intent classification | Match user questions to supported platform and maize farming topics. |
+| Bounded text assistant | Provide predefined answers about the platform and general maize farming, while explaining its limitations. |
 | Joblib | Save and load the fitted yield pipeline and model metadata. |
 | Streamlit | Present field inputs, predictions, annual analysis, production scenarios and the assistant. |
 | GitHub and GitHub Projects | Maintain version history and track project tasks. |
 
-The annual chart provides descriptive analysis of yield over time. It does not forecast future annual yields or track changes on the same identified farms.
 
 ## 5. Expected Business Benefits
 
@@ -154,11 +155,36 @@ The annual chart provides descriptive analysis of yield over time. It does not f
 
 **Transparent model evaluation:** Comparing regression errors with the historical baseline helps show whether the model adds predictive value. Improvements in prediction accuracy and business outcomes must be demonstrated rather than assumed.
 
-## 6. Outstanding Checks Before Submission
+## 5. Expected Business Benefits
 
-- Add an appropriate dataset citation and references for research-based claims. No citations were included in the supplied draft.
-- Resolve and document the deep learning component required by the rubric.
-- Verify statements about missing data and model performance against the final dataset checks and calculated results.
-- Include the required poster, presentation, signed declaration, Grammarly results and project management evidence.
-- Format the final assessment document in Arial 12, with 1.5 line spacing and justified text, and submit it as a PDF. Markdown alone does not enforce these formatting requirements.
+**1. Aramburu Merlos, F., Tenorio, F.A., Mashingaidze, N., Sananka, A., Aston, S. and Grassini, P. (2024).** Maize management and yield of smallholder farmers in Sub-Saharan Africa between 2016 and 2022. Version 2 [Dataset]. Zenodo. Available at: https://doi.org/10.5281/zenodo.11122388.
 
+**2. Tutorials Point (I) Pvt. Ltd. (2016).** AI with Python. Available at: AI with Python tutorial.
+
+**3. Farm Africa (2025).** Maize production training manual. Available at: Maize production training manual.
+
+**4. Bouagnimbeck, H. and Ssebunya, B. (2011).** African Organic Agriculture Training Manual: Module 09—Crops, Unit 2—Maize. Draft version 1.0. Research Institute of Organic Agriculture (FiBL). Available at: Maize training manual.
+
+**5. Shepherd, A.W. (1999).** A guide to maize marketing for extension officers. Marketing Extension Guide 1. Rome: Food and Agriculture Organization of the United Nations. Available at: A guide to maize marketing.
+
+**6. The pandas development team (n.d.).** pandas documentation.
+
+**7. NumPy developers (n.d.).** NumPy documentation.
+
+**8. Matplotlib development team (n.d.).** Matplotlib documentation.
+
+**9. Streamlit (n.d.).** Streamlit documentation.
+
+**10. Joblib developers (n.d.).** Joblib documentation.
+
+**11. Scikit-learn developers (n.d.).** Preprocessing data.
+
+**12. Scikit-learn developers (n.d.).** Imputation of missing values.
+
+**13. Scikit-learn developers (n.d.).** Feature extraction.
+
+**14. Scikit-learn developers (n.d.).** Metrics and scoring: quantifying the quality of predictions.
+
+**15. Scikit-learn developers (n.d.).** Common pitfalls and recommended practices.
+
+**16. Scikit-learn developers (n.d.).** Linear models.
