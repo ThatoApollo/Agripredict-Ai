@@ -1,5 +1,5 @@
-"""Run from the project root: streamlit run Code/dashboard.py"""
-
+"""Run from the project root: python -m streamlit run Code/dashboard.py"""
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -7,162 +7,194 @@ import streamlit as st
 
 import chatbot
 import settings
-from preparation import df, train, validation
+from preparation import load_data
 
-st.set_page_config(page_title="AgriPredict AI", page_icon="🌽", layout="wide")
-st.markdown("""
-<style>
-.stApp {background: #f6f8fa;}
-.block-container {padding-top: 1.5rem; max-width: 1500px;}
-.agri-header {background: #12452f; color: white; padding: 18px 24px;
- border-radius: 10px; margin-bottom: 28px; font-size: 22px; font-weight: 600;}
-.agri-header span {color: #c8e3d4; font-weight: 400;}
-[data-testid="stVerticalBlockBorderWrapper"] {background: white; border-radius: 14px;}
-h1, h2, h3 {color: #101b2e;}
-</style>
-""", unsafe_allow_html=True)
-st.markdown('<div class="agri-header">🌽 AgriPredict AI <span>· Maize yields</span></div>',
-            unsafe_allow_html=True)
+st.set_page_config(page_title='AgriPredict AI', page_icon='🌽', layout='wide')
 
 
-def read_metrics(filename):
-    path = settings.PROJECT_DIR / "Results" / filename
-    try:
-        data = pd.read_csv(path)
-        if not {"split", "model", "MAE", "RMSE"}.issubset(data.columns):
-            return None
-        data = data[data["split"] == "Test"].copy()
-        for column in ["MAE", "RMSE"]:
-            data[column] = pd.to_numeric(data[column], errors="raise")
-        if data.empty or not np.isfinite(data[["MAE", "RMSE"]]).all().all():
-            return None
-        if (data[["MAE", "RMSE"]] < 0).any().any():
-            return None
-        return data
-    except (OSError, ValueError, TypeError, pd.errors.ParserError):
-        return None
+@st.cache_resource
+def assistant_model():
+    return chatbot.build_classifier()
 
 
-left, right = st.columns([3, 1])
-with left:
-    st.title("Provincial Maize Overview")
-    st.caption("Provincial maize yield information to help plan procurement and storage.")
-with right:
-    province = st.selectbox("Choose a province", settings.PROVINCES)
+try:
+    data = load_data()
+except (OSError, ValueError, TypeError) as error:
+    st.error('The field records could not be opened. Please ask the person managing this app to check the dataset.')
+    st.stop()
 
-rows = df[df["province"] == province].sort_values("harvest_year")
-history = pd.concat([train, validation], ignore_index=True)
-baseline = float(history.loc[history["province"] == province, settings.TARGET].mean())
-latest_season = rows.iloc[-1]["season"]
-for column, label, value in zip(st.columns(4),
-        ["Provinces", "Seasons covered", "Latest recorded season", "Average yield"],
-        [str(df["province"].nunique()), str(rows["season"].nunique()), latest_season,
-         f"{rows[settings.TARGET].mean():.2f} t/ha"]):
-    with column:
+# Use the same earlier records used to calculate the saved model's baseline.
+training_history = data[data['year'] < settings.TEST_YEAR]
+historical_baseline = float(training_history[settings.TARGET].mean())
+model_path = settings.PROJECT_DIR / 'Results' / 'yield_model.joblib'
+model_bundle = None
+try:
+    # Only load the locally generated, trusted project artifact.
+    model_bundle = joblib.load(model_path)
+    if model_bundle['selected_model'] != 'Linear regression':
+        model_bundle = None
+    elif model_bundle['features'] != settings.FEATURES:
+        model_bundle = None
+    elif model_bundle['unit'] != settings.UNIT:
+        model_bundle = None
+    elif not np.isclose(model_bundle['historical_baseline_mean'], historical_baseline):
+        model_bundle = None
+except Exception:
+    model_bundle = None
+
+st.title('🌿 AgriPredict AI · Maize harvest planning')
+with st.container(border=True, key='overview'):
+    st.subheader('Maize field overview')
+    origin_column, observation_column, years_column, latest_year_column = st.columns(4)
+    with origin_column:
         with st.container(border=True):
-            st.metric(label, value)
-st.caption("Yield is measured in tonnes per planted hectare. The average covers all recorded seasons for the selected province.")
+            st.metric('Origin', 'Kenya')
+    with observation_column:
+        with st.container(border=True):
+            st.metric('Field observations', f'{len(data):,}')
+    with years_column:
+        with st.container(border=True):
+            st.metric('Years covered', str(data['year'].nunique()))
+    with latest_year_column:
+        with st.container(border=True):
+            st.metric('Latest recorded year', str(int(data['year'].max())))
 
-chart_column, scenario_column = st.columns([2, 1])
-with chart_column:
-    with st.container(border=True):
-        st.subheader(f"Historical yield — {province}")
-        fig, ax = plt.subplots(figsize=(10, 4.5))
-        ax.plot(rows["harvest_year"], rows[settings.TARGET], color="#168345",
-                marker="o", markersize=4, label="Observed yield")
-        ax.plot(rows["harvest_year"], rows[settings.TARGET].rolling(3).mean(),
-                color="#dc8c22", linestyle="--", label="Average of the last 3 seasons")
-        years = rows["harvest_year"].tolist()[::3]
-        ax.set_xticks(years, [f"{y-1}/{str(y)[-2:]}" for y in years], rotation=35, ha="right")
-        ax.set_ylabel("Tonnes per planted hectare")
-        ax.grid(alpha=.2, linestyle="--")
-        ax.spines[["top", "right"]].set_visible(False)
-        ax.legend(frameon=False, fontsize=9)
-        fig.tight_layout()
-        st.pyplot(fig)
-        plt.close(fig)
-        st.caption("The green line shows each season’s recorded yield.")
-        st.caption("The orange dashed line averages three seasons to make the overall pattern easier to see.")
-with scenario_column:
-    with st.container(border=True):
-        st.subheader("Historical Average for Planning")
-        st.metric("Average yield per planted hectare:", f"{baseline:.2f} t/ha")
-        st.write("Calculated from the selected province’s yields between 2000/01 and 2019/20. This average is used in the production planning calculation.")
-        st.caption("This average is based on past yields and does not use this season’s weather to predict the harvest.")
-    with st.container(border=True):
-        st.subheader("Planning scenario")
-        area = st.number_input("Enter planted area (hectares)", min_value=0.0, max_value=10000000.0,
-                           value=None, step=1.0, placeholder="Type your planted area")
-        if area is not None:
-          volume = baseline * area
-          st.metric("Estimated production for this scenario", f"{volume:,.0f} tonnes")
+input_column, result_column = st.columns([1.18, 1], gap='small')
+with input_column:
+    with st.container(border=True, height='stretch', key='field-panel'):
+        st.subheader('Estimate your yield')
+        st.caption('Use comparable soil measurements. Unknown details should not be guessed.')
+        with st.form('field_details', border=False):
+            left_input_column, right_input_column = st.columns(2)
+            with left_input_column:
+                latitude = st.number_input('Latitude', min_value=-90.0, max_value=90.0,
+                    value=None, placeholder='e.g. -1.2864',
+                    format='%.3f', help='Your field’s north–south position in decimal degrees.', key='latitude')
+                elevation = st.number_input('Height above sea level (metres)', value=None,
+                    min_value=0.0, step=1.0, placeholder='e.g. 1200', key='elevation')
+                clay = st.number_input('Clay in the soil (%)', min_value=0.0, max_value=100.0,
+                    value=None, placeholder='e.g. 25', key='clay')
+            with right_input_column:
+                longitude = st.number_input('Longitude', min_value=-180.0, max_value=180.0,
+                    value=None, placeholder='e.g. 36.8172',
+                    format='%.3f', help='Your field’s east–west position in decimal degrees.', key='longitude')
+                soil_ph = st.number_input('Soil pH', min_value=0.0, max_value=14.0,
+                    value=None, placeholder='e.g. 5.6',
+                    help='A measure of how acidic or alkaline the soil is.', key='ph')
+                organic_carbon = st.number_input('Organic carbon in the soil (g/kg)', min_value=0.0,
+                    value=None, placeholder='e.g. 8.4',
+                    help='Use the organic carbon value, not an organic matter percentage.', key='carbon')
+            hybrid = st.selectbox('Was commercial hybrid seed used?', ['Yes', 'No'], index=None,
+                placeholder='Choose an answer', key='hybrid')
+            submitted = st.form_submit_button('Estimate yield', type='primary', width='stretch')
+        if submitted:
+            # Clear the previous estimate even if this submission is invalid.
+            st.session_state.pop('estimate', None)
+            # Keep this order aligned with settings.FEATURES and the saved model.
+            numeric_inputs = [latitude, longitude, elevation, clay, soil_ph, organic_carbon]
+            if any(value is None for value in numeric_inputs) or hybrid is None:
+                st.warning('Please complete all field details before requesting an estimate.')
+            elif model_bundle is None:
+                st.error('The saved prediction model is unavailable. Please ask the person managing this app to restore it.')
+            else:
+                prediction_inputs = pd.DataFrame([numeric_inputs + [1 if hybrid == 'Yes' else 0]], columns=settings.FEATURES)
+                out_of_range_features = []
+                for feature in settings.FEATURES:
+                    value = prediction_inputs.iloc[0][feature]
+                    if value < training_history[feature].min() or value > training_history[feature].max():
+                        out_of_range_features.append(feature)
+                if out_of_range_features:
+                    st.warning('Some details fall outside the values in the earlier field records. This prototype cannot provide a supported estimate for these details.')
+                else:
+                    try:
+                        predicted_yield = float(model_bundle['estimator'].predict(prediction_inputs)[0])
+                        if not np.isfinite(predicted_yield) or predicted_yield < 0:
+                            raise ValueError('Unsupported yield output')
+                        st.session_state['estimate'] = {'yield': predicted_yield,
+                            'inputs': prediction_inputs.iloc[0].to_dict()}
+                    except Exception:
+                        st.error('An estimate could not be calculated for these details. Please ask the person managing this app to check the model.')
 
-comparison_column, performance_column = st.columns(2)
-with comparison_column:
-    with st.container(border=True):
-        st.subheader("Provincial comparison")
-        means = df.groupby("province")[settings.TARGET].mean().reindex(settings.PROVINCES)
-        fig, ax = plt.subplots(figsize=(7, 4))
-        ax.bar(means.index, means.values, color=["#17643c", "#168345", "#6da813"])
-        ax.set_ylabel("Tonnes per planted hectare")
-        ax.set_ylim(bottom=0)
-        ax.grid(axis="y", alpha=.2)
-        ax.set_axisbelow(True)
-        ax.spines[["top", "right"]].set_visible(False)
-        fig.tight_layout()
-        st.pyplot(fig)
-        plt.close(fig)
-        st.caption("This graph compares the average maize yield per planted hectare across the three provinces over 24 seasons, from 2000/01 to 2023/24.")
-
-with performance_column:
-    with st.container(border=True):
-        st.subheader("Model performance")
-        st.caption("Models were trained on earlier seasons and tested on 2020/21–2023/24, using 12 records across the three provinces.")
-
-        number_format = {
-            "MAE": st.column_config.NumberColumn(format="%.3f"),
-            "RMSE": st.column_config.NumberColumn(format="%.3f")
-        }
-
-        scores = read_metrics("model_metrics.csv")
-        if scores is None:
-            st.warning("Model results are unavailable. Run python Code/yield_model.py from the project root.")
+estimate = st.session_state.get('estimate')
+with result_column:
+    with st.container(border=True, key='yield-panel'):
+        st.subheader('Your estimated yield')
+        with st.container(border=True, key='yield-result'):
+            if estimate is None:
+                st.metric('Yield per hectare', '— t/ha')
+                st.caption('Submit your field details to see an estimate.')
+            else:
+                st.metric('Yield estimate', f"{estimate['yield']:.2f} t/ha")
+                st.caption('Based on your last submitted details. Press Estimate yield again after making changes.')
+        st.caption('An early estimate using the sampled Kenyan conditions. It does not know the coming season’s weather or guarantee a harvest.')
+        if model_bundle is None:
+            st.warning('Yield estimates are currently unavailable. Past records and saved results can still be viewed.')
+    with st.container(border=True, height='stretch', key='scenario-panel'):
+        st.subheader('Planning scenario')
+        area = st.number_input('Enter planted area (hectares)', min_value=0.0, max_value=10000000.0,
+            value=None, step=0.5, key='area')
+        if area is not None and estimate is not None:
+            production = estimate['yield'] * area
+            st.metric('Estimated production for this scenario', f'{production:,.0f} tonnes')
         else:
-            table = scores[["model", "MAE", "RMSE"]].rename(columns={"model": "Approach"})
-            st.dataframe(table, hide_index=True, width="stretch",
-                         column_config=number_format)
+            st.metric('Estimated production for this scenario', '— tonnes')
+            if estimate is None:
+                st.caption('Submit your field details to calculate production.')
+            else:
+                st.caption('Enter planted area to calculate production.')
 
-        neural = read_metrics("neural_network_metrics.csv")
-        if neural is not None:
-            st.caption("Experimental neural network — exploratory comparison using the previously inspected test period:")
-            table = neural[neural["model"] == "Experimental neural network"]
-            table = table[["model", "MAE", "RMSE"]].rename(columns={"model": "Approach"})
-            st.dataframe(table, hide_index=True, width="stretch",
-                         column_config=number_format)
+with st.container(border=True, height='stretch', key='chart-panel'):
+    st.subheader('Recorded yield over time')
+    annual_yields = data.groupby('year')[settings.TARGET].agg(['mean', 'median'])
 
-        st.caption("MAE (Mean Absolute Error): Shows how far predictions were from the recorded yields on average.")
-        st.caption("RMSE (Root Mean Squared Error): Also measures prediction error, but gives more weight to large mistakes. It helps highlight models that occasionally make predictions far from the recorded yields.")
-        st.caption("Both measures use tonnes per planted hectare. Lower values mean smaller prediction errors.")
-        st.write("The historical average had the lowest error during validation, so the approach was selected for planning. Future yields may still differ from this average.")     
+    figure, axes = plt.subplots(figsize=(7, 3.8))
+    axes.plot(annual_yields.index, annual_yields['mean'], marker='o',
+            color='#168345', label='Mean yield')
+    axes.plot(annual_yields.index, annual_yields['median'], marker='s',
+            color='#7a8eae', label='Median yield')
+    axes.set_xticks(annual_yields.index)
+    axes.set_ylim(bottom=0)
+    axes.set_ylabel('Yield (t/ha)')
+    axes.set_xlabel('Year')
+    axes.legend(loc='upper center', bbox_to_anchor=(0.5, -0.22), ncol=2, frameon=False)
+    axes.grid(alpha=0.15)
+    axes.spines['top'].set_visible(False)
+    axes.spines['right'].set_visible(False)
+    figure.tight_layout()
+    st.pyplot(figure)
+    plt.close(figure)
 
-with st.container(border=True):
-    st.subheader("AgriPredict Assistant")
-    st.caption("Ask one question about the platform or a supported maize farming topic. Replies are predefined; the assistant does not use earlier messages as context.")
-    if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content":
-            "Hello! Ask about model performance, maize planting, soil, irrigation, fertiliser or crop rotation."}]
-    if st.button("Clear Chat"):
-        st.session_state.messages = st.session_state.messages[:1]
-    with st.container(height=320):
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.write(message["content"])
-    question = st.chat_input("Ask about AgriPredict or maize farming", max_chars=1000)
+    st.caption(
+        'Mean: The average yield for each year, calculated by adding all '
+        'recorded yields and dividing by the number of observations.'
+    )
+    st.caption(
+        'Median: The central yield for each year. After sorting yields from '
+        'lowest to highest, it is the middle value—or the average of the '
+        'two middle values.'
+    )
+    st.caption(
+        'Chart purpose: Compare average and central yields across 2016–2020 '
+        'to see how yields varied in the sampled Kenyan fields. Different '
+        'fields may be included each year; the chart does not represent '
+        'national averages or predict future yields.'
+    )
+
+with st.container(border=True, key='assistant-panel'):
+    st.subheader('AgriPredict Assistant')
+    st.caption('Ask one question about this project, its results or a supported maize topic. Ask “What can you do?” for help. Replies come from prepared information; each question is handled on its own.')
+    if 'messages' not in st.session_state:
+        st.session_state['messages'] = [{'role': 'assistant', 'content': 'Hello! Ask “What can you do?” to see my abilities and limits, or ask about yield estimates, the data, model errors or harvest planning.'}]
+    if st.button('Clear chat'):
+        st.session_state['messages'] = st.session_state['messages'][:1]
+    with st.container(height=150, border=False):
+        for message in st.session_state['messages']:
+            with st.chat_message(message['role']):
+                st.write(message['content'])
+    question = st.chat_input('Ask about AgriPredict or maize planning', max_chars=1000)
     if question:
-        st.session_state.messages.extend([
-            {"role": "user", "content": question},
-            {"role": "assistant", "content": chatbot.respond(question)},
-        ])
+        answer, topic, confidence = chatbot.respond(question, assistant_model())
+        st.session_state['messages'].append({'role': 'user', 'content': question})
+        st.session_state['messages'].append({'role': 'assistant', 'content': answer})
         st.rerun()
-
-st.caption("AgriPredict AI — Turning past harvests into smarter plans.")
+st.caption('Student prototype · Kenyan field records, 2016–2020 · Experimental harvest planning support')
