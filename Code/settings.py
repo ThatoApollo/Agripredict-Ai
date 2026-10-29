@@ -1,7 +1,7 @@
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-DATA_FILE = PROJECT_DIR / 'Dataset' / 'AgriPredict_Kenya_Prepared.csv'
+DATA_FILE = PROJECT_DIR / 'Dataset' / 'AgriPredict_Final_Dataset.csv'
 # Keep this order: the dashboard and model uses it for prediction inputs.
 FEATURES = ['lat', 'lon', 'elev', 'soil_clay', 'soil_pH', 'soil_orgC', 'hybrid']
 SOIL_FEATURES = ['soil_clay', 'soil_pH', 'soil_orgC']
