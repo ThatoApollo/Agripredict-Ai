@@ -1,97 +1,114 @@
-"""Compare a provincial historical baseline with two regression models."""
-from pathlib import Path
-
+"""Train and evaluate linear regression for maize yield. Run: python Code/yield_model.py"""
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.base import clone
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.pipeline import make_pipeline
 
 import settings
-from preparation import train, validation, test
+from preparation import load_data, split_data, model_data, make_preprocessor
 
-RESULTS_DIR = settings.PROJECT_DIR / "Results"
-
-
-def baseline_predict(history, rows):
-    # Each province's mean uses only the supplied historical training records.
-    means = history.groupby("province")[settings.TARGET].mean()
-    return rows["province"].map(means).to_numpy()
+RESULTS_DIR = settings.PROJECT_DIR / 'Results'
 
 
-def score(actual, predicted):
-    return {
-        "MAE": mean_absolute_error(actual, predicted),
-        "RMSE": np.sqrt(mean_squared_error(actual, predicted)),
-    }
+def calculate_errors(actual, predicted):
+    mae = mean_absolute_error(actual, predicted)
+    rmse = np.sqrt(mean_squared_error(actual, predicted))
+    return mae, rmse
 
 
 def main():
     RESULTS_DIR.mkdir(exist_ok=True)
-    models = {
-        "Linear regression": LinearRegression(),
-        "Random forest": RandomForestRegressor(
-            n_estimators=200, max_depth=3, min_samples_leaf=4, random_state=42
-        ),
-    }
-    metrics = []
-    predictions = []
+    data = load_data()
+    train, validation, test = split_data(data)
+    training_features, training_target = model_data(train)
+    validation_features, validation_target = model_data(validation)
 
-    # Fix model settings before examining the final test results.
-    for name in ["Historical baseline", *models]:
-        if name == "Historical baseline":
-            predicted = baseline_predict(train, validation)
-        else:
-            model = clone(models[name])
-            model.fit(train[settings.FEATURES], train[settings.TARGET])
-            predicted = model.predict(validation[settings.FEATURES])
-        metrics.append({"split": "Validation", "model": name,
-                        **score(validation[settings.TARGET], predicted)})
-
-    # Choose by validation MAE; test performance does not change this choice.
-    selected = min(metrics, key=lambda row: row["MAE"])["model"]
-    history = pd.concat([train, validation], ignore_index=True)
-    fitted_models = {}
-    for name in ["Historical baseline", *models]:
-        if name == "Historical baseline":
-            predicted = baseline_predict(history, test)
-        else:
-            model = clone(models[name])
-            model.fit(history[settings.FEATURES], history[settings.TARGET])
-            predicted = model.predict(test[settings.FEATURES])
-            fitted_models[name] = model
-        metrics.append({"split": "Test", "model": name,
-                        **score(test[settings.TARGET], predicted)})
-        rows = test[["province", "season", settings.TARGET]].copy()
-        rows = rows.rename(columns={settings.TARGET: "actual_yield"})
-        rows["model"] = name
-        rows["predicted_yield"] = predicted
-        rows["error"] = rows["predicted_yield"] - rows["actual_yield"]
-        predictions.append(rows)
-
-    metrics = pd.DataFrame(metrics)
-    metrics.to_csv(RESULTS_DIR / "model_metrics.csv", index=False)
-    pd.concat(predictions, ignore_index=True).to_csv(
-        RESULTS_DIR / "test_predictions.csv", index=False
+    selected_name = 'Linear regression'
+    model_template = make_pipeline(
+        make_preprocessor(scale=True), LinearRegression()
     )
-    # Preserve the evaluated model and its metadata for later dashboard work.
-    # It is not refitted on the test data.
+
+    validation_results = []
+    # The historical mean is a reference calculation, not a trained algorithm.
+    for name in ['Historical baseline', selected_name]:
+        if name == 'Historical baseline':
+            predicted = np.full(len(validation_features), float(training_target.mean()))
+        else:
+            model = clone(model_template)
+            model.fit(training_features, training_target)
+            predicted = model.predict(validation_features)
+        mae, rmse = calculate_errors(validation_target, predicted)
+        validation_results.append({'model': name, 'MAE': mae, 'RMSE': rmse})
+
+    validation_scores = pd.DataFrame(validation_results)
+    # This winner refers only to the two retained evaluation rows.
+    best_row = validation_scores['MAE'].idxmin()
+    validation_winner = validation_scores.loc[best_row, 'model']
+    # Linear regression remains a design choice made after the test scores were known.
+    validation_scores.to_csv(RESULTS_DIR / 'validation_metrics.csv', index=False)
+
+    # Model choices are fixed above, before accessing the test inputs/targets.
+    history = pd.concat([train, validation], ignore_index=True)
+    history_features, history_target = model_data(history)
+    test_features, test_target = model_data(test)
+    test_results = []
+    prediction_tables = []
+    selected_model = None
+    for name in ['Historical baseline', selected_name]:
+        if name == 'Historical baseline':
+            predicted = np.full(len(test_features), float(history_target.mean()))
+        else:
+            model = clone(model_template)
+            model.fit(history_features, history_target)
+            predicted = model.predict(test_features)
+        if not np.isfinite(predicted).all():
+            raise ValueError('Model produced non-finite predictions.')
+        mae, rmse = calculate_errors(test_target, predicted)
+        test_results.append({'model': name, 'MAE': mae, 'RMSE': rmse})
+        rows = test[['source_row', 'year']].copy()
+        rows['model'] = name
+        rows['actual_yield'] = test_target
+        rows['predicted_yield'] = predicted
+        rows['error'] = predicted - test_target
+        prediction_tables.append(rows)
+        if name == selected_name:
+            selected_model = model
+
+    test_scores = pd.DataFrame(test_results)
+    test_scores.to_csv(RESULTS_DIR / 'test_metrics.csv', index=False)
+    predictions = pd.concat(prediction_tables, ignore_index=True)
+    predictions.to_csv(RESULTS_DIR / 'test_predictions.csv', index=False)
+
+    # Save the entire fitted pipeline, including learned missing-value handling.
     joblib.dump({
-        "selected_model": selected,
-        "estimator": fitted_models.get(selected),
-        "province_means": history.groupby("province")[settings.TARGET].mean().to_dict(),
-        "features": settings.FEATURES,
-        "unit": settings.UNIT,
-        "training_end_year": int(history["harvest_year"].max()),
-    }, RESULTS_DIR / "yield_model.joblib")
-    print(f"Rows: training={len(train)}, validation={len(validation)}, test={len(test)}")
-    print(metrics.to_string(index=False, float_format=lambda value: f"{value:.3f}"))
-    print("Selected using validation MAE:", selected)
-    print("Units:", settings.UNIT)
-    print("Results saved to", RESULTS_DIR)
+        'selected_model': selected_name,
+        'estimator': selected_model,
+        'features': settings.FEATURES,
+        'target': settings.TARGET,
+        'unit': settings.UNIT,
+        'prediction_context': 'experimental planting-time estimate',
+        'training_years': [2016, 2017, 2018, 2019],
+        'test_year': settings.TEST_YEAR,
+        'validation_winner': validation_winner,
+        'selection_rule': 'linear regression chosen for simplicity and explainability',
+        'selection_timing': 'design decision after 2020 test results were known',
+        'evaluation_status': '2020 scores are historical; not a fresh independent assessment of this choice',
+        'historical_baseline_mean': float(history_target.mean()),
+    }, RESULTS_DIR / 'yield_model.joblib')
+
+    print('Validation results:')
+    print(validation_scores.round(4).to_string(index=False))
+    print('\nLowest validation MAE among retained results:', validation_winner)
+    print('Prototype model chosen for simplicity:', selected_name)
+    print('\nFinal test results:')
+    print(test_scores.round(4).to_string(index=False))
+    print('\nUnits:', settings.UNIT)
+    print('Results saved in:', RESULTS_DIR)
+    print('Do not use test scores to retune the model.')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
