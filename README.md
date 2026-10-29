@@ -125,9 +125,9 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 
 **Response:** Tasks should be divided according to each member’s availability and strengths, with clear responsibilities and manageable deadlines. GitHub Projects can help track progress, identify delays and support adjustments to the workload.
 
-### 4.5 Tools and Techniques
+### 4.5 Tools & Techniques
 
-| Tool or technique | Purpose |
+| Tool / technique | Purpose |
 |---|---|
 | Python, pandas and NumPy | Prepare and validate data, calculate summaries and handle numerical inputs. |
 | Matplotlib | Produce the annual mean and median yield chart. |
