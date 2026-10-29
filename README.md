@@ -1,4 +1,4 @@
-# AgriPredict AI (Kenya)
+# AgriPredict AI
 
 ## 1. Project Background
 
