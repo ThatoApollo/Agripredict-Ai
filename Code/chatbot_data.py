@@ -172,7 +172,18 @@ INTENTS = {
             'how far off are the estimates',
             'what are the test scores',
         ],
-        'answer': None,
+        # Fixed historical results for the current dataset and modelling procedure.
+        # Update these scores after changing the data, split or model.
+        'answer': (
+            'Recorded 2020 errors, in tonnes per hectare: '
+            'Linear regression: MAE 1.258, RMSE 1.653. '
+            'Historical baseline: MAE 1.206, RMSE 1.540. '
+            'The historical baseline had lower recorded MAE and RMSE than linear regression. '
+            'Lower values mean smaller prediction errors; these are not accuracy percentages. '
+            'Linear regression was adopted for simplicity after test results were known. '
+            'These fixed historical scores are not a new independent test or a guarantee '
+            'for another field.'
+        ),
     },
     'error_meaning': {
         'examples': [
