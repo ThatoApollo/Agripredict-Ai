@@ -69,7 +69,7 @@ These criteria assess whether the prototype provides its intended functions. Dem
 - Predictions of cooperative deliveries or guaranteed financial returns.
 - Tracking the same identified farm across several years.
 - Forecasting future annual yields.
-
+- Deep learning is excluded from the final prediction feature because linear regression achieved lower prediction errors than the experimental neural network.
 ### 4.3 Initial Requirements
 
 The system must allow users to enter location, elevation, soil characteristics and hybrid seed information to generate a maize yield estimate. It must display annual mean and median yield patterns, calculate a production scenario using the estimated yield and planted area, and make saved model performance results available through the text assistant.
