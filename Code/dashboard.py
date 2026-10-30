@@ -182,7 +182,7 @@ with st.container(border=True, height='stretch', key='chart-panel'):
 
 with st.container(border=True, key='assistant-panel'):
     st.subheader('AgriPredict Assistant')
-    st.caption('Ask one question about this project, its results or a supported maize topic. Ask “What can you do?” for help. Replies come from prepared information; each question is handled on its own.')
+    st.caption('Ask one question about this project, its results or a supported maize topic. Ask “What can you do?” for help.')
     if 'messages' not in st.session_state:
         st.session_state['messages'] = [{'role': 'assistant', 'content': 'Hello! Ask “What can you do?” to see my abilities and limits, or ask about yield estimates, the data, model errors or harvest planning.'}]
     if st.button('Clear chat'):
@@ -197,4 +197,4 @@ with st.container(border=True, key='assistant-panel'):
         st.session_state['messages'].append({'role': 'user', 'content': question})
         st.session_state['messages'].append({'role': 'assistant', 'content': answer})
         st.rerun()
-st.caption('Student prototype · Kenyan field records, 2016–2020 · Experimental harvest planning support')
+st.caption('AgriPredict. Turning past havervests into smarter plans.')
