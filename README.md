@@ -156,7 +156,7 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 
 **Transparent model evaluation:** Comparing regression errors with the historical baseline helps show whether the model adds predictive value. Improvements in prediction accuracy and business outcomes must be demonstrated rather than assumed.
 
-## 5. Reference
+## 6. Reference
 
 **1. Aramburu Merlos, F., Tenorio, F.A., Mashingaidze, N., Sananka, A., Aston, S. and Grassini, P. (2024).** Maize management and yield of smallholder farmers in Sub-Saharan Africa between 2016 and 2022. Version 2 [Dataset]. Zenodo. Available at: https://doi.org/10.5281/zenodo.11122388.
 
