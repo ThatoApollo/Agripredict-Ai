@@ -131,6 +131,7 @@ It must validate inputs, display yield in tonnes per hectare and production in t
 |---|---|
 | Python, pandas and NumPy | Prepare and validate data, calculate summaries and handle numerical inputs. |
 | Matplotlib | Produce the annual mean and median yield chart. |
+| Canva | Create the presentation and poster. |
 | Scikit-learn linear regression | Estimate maize yield from the seven selected inputs. |
 | Historical mean baseline | Provide a simple reference for evaluating model performance. |
 | Standardisation | Place numerical inputs on a comparable scale within the fitted pipeline. |
