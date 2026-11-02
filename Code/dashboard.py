@@ -135,7 +135,7 @@ with result_column:
             value=None, step=0.5, key='area')
         if area is not None and estimate is not None:
             production = estimate['yield'] * area
-            st.metric('Estimated production for this scenario', f'{production:,.0f} tonnes')
+            st.metric('Estimated production for this scenario', f'{production:,.2f} tonnes')
         else:
             st.metric('Estimated production for this scenario', '— tonnes')
             if estimate is None:
@@ -197,4 +197,4 @@ with st.container(border=True, key='assistant-panel'):
         st.session_state['messages'].append({'role': 'user', 'content': question})
         st.session_state['messages'].append({'role': 'assistant', 'content': answer})
         st.rerun()
-st.caption('AgriPredict. Turning past havervests into smarter plans.')
+st.caption('AgriPredict. Turning past harvests into smarter plans.')
