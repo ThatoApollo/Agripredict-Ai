@@ -42,7 +42,7 @@ try:
 except Exception:
     model_bundle = None
 
-st.title('🌿 AgriPredict AI · Maize harvest planning')
+st.title('🌽 AgriPredict AI · Maize harvest planning')
 with st.container(border=True, key='overview'):
     st.subheader('Maize field overview')
     origin_column, observation_column, years_column, latest_year_column = st.columns(4)
