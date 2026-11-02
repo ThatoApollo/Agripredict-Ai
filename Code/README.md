@@ -22,7 +22,7 @@ This script provides reproducible comparisons between linear regression, random 
 
 ### `Code/time_series.py`
 
-This script describes how recorded maize yields vary across the five observation years. It calculates annual summaries, including observation counts, mean yield, median yield, standard deviation and the change in mean yield from the previous year. It saves the summary as a CSV file and creates one line chart showing annual mean and median yields. This is descriptive annual analysis rather than a forecasting model. Different fields and locations may be represented each year, so the chart does not track the same identified farms or represent national Kenyan averages.
+This script describes how recorded maize yields vary across the five observation years. It calculates annual summaries, including observation counts, mean yield, median yield, standard deviation and the change in mean yield from the previous year. It saves the summary as a CSV file and creates a line chart showing annual mean and median yields. This is descriptive annual analysis rather than a forecasting model. Different fields and locations may be represented each year, so the chart does not track the same identified farms or represent national Kenyan averages.
 
 ### `Code/chatbot_data.py`
 
