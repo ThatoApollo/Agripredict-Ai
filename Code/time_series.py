@@ -12,7 +12,11 @@ from preparation import load_data
 def main():
     data = load_data()
     results_dir = settings.PROJECT_DIR / 'Results'
-    figures_dir = settings.PROJECT_DIR / 'Documentation' / 'Figures'
+    figures_dir = (
+        settings.PROJECT_DIR
+        / 'Documentation'
+        / ' Time Series Analysis on Data'
+    )
     results_dir.mkdir(exist_ok=True)
     figures_dir.mkdir(parents=True, exist_ok=True)
 
