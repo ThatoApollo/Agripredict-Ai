@@ -1,7 +1,3 @@
-# AgriPredict AI
-
-AgriPredict AI is a Python prototype that estimates maize yield using Kenyan field observations from 2016–2020. It uses location, elevation, soil characteristics and hybrid seed status to produce an experimental estimate in tonnes per hectare. The Streamlit dashboard also provides a production scenario, one annual yield chart and a bounded text assistant. Linear regression powers the dashboard, while random forests and a neural network are evaluated separately.
-
 ## Code files and how they work
 
 ### `Code/settings.py`
@@ -110,17 +106,6 @@ The prepared dataset contains 7,258 observations: 3,212 from 2016–2018, 1,755 
 
 All errors are in tonnes per hectare; lower values indicate smaller prediction errors. The historical baseline performs better on 2020 records. Linear regression was retained for simplicity and explainability after those results were known, so the model choice still requires evaluation on new data. The project does not establish improved real-world farming outcomes or reliable predictions outside the sampled conditions.
 
-## Troubleshooting
-
-If Python is not recognised, check that Python 3.12 is installed and reopen PowerShell. If a package is missing, repeat the dependency installation command using the virtual environment. If the dataset or saved model is unavailable, confirm that the project was fully extracted and run the rebuilding commands in order. If port 8501 is occupied, start the dashboard on another port:
-
-```powershell
-.\.venv\Scripts\python.exe -m streamlit run Code/dashboard.py --server.port 8502
-```
-
-## Verification
-
-The updated code workflow was tested on Linux, including data reconstruction, model training, experiments, annual analysis and programmatic dashboard checks. The corrected chatbot matched all 180 supplied example questions and handled the unrelated and invalid inputs tested. Matching supplied examples is a regression check, not an independent chatbot accuracy estimate. The Windows commands still need to be verified on the assessment computer, and the dashboard’s visual layout needs a browser review.
 
 ## Dataset source
 
