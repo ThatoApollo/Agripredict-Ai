@@ -83,9 +83,7 @@ These commands reconstruct and validate the dataset, check preprocessing, train 
 
 To reproduce the separate model comparisons, run:
 
-```powershell
-.\.venv\Scripts\python.exe Code/experiments.py
-```
+.\.venv\Scripts\python.exe "Code/Deep Learning Experiment/experiments.py"
 
 The experiment outputs are saved under `Results/Experiments`. Running this script does not change which model powers the dashboard.
 
