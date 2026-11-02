@@ -32,6 +32,13 @@ def respond(question, model):
         return 'Hello! Ask what I can do, or ask about AgriPredict, its results or a supported maize topic.', 'greeting', 0.0
     if clean_question.rstrip('?! .') in ASSISTANT_HELP_QUESTIONS:
         return INTENTS['assistant_help']['answer'], 'assistant_help', 0.0
+
+    # Match supported example questions directly.
+    for topic, intent in INTENTS.items():
+        for example in intent['examples']:
+            if clean_question.rstrip('?! .') == example.strip().lower().rstrip('?! .'):
+                return intent['answer'], topic, 1.0
+
     if ' and ' in clean_question:
         first, second = clean_question.split(' and ', 1)
         _, first_topic, _ = respond(first, model)
